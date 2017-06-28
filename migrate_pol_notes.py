@@ -29,15 +29,15 @@ def get_request(url):
 def populate_data(r):
     return_data = ''
     return_data = return_data +  'Paid Date: '  + r[0].strip('"')
-    return_data = return_data +  '| Invoice Date: ' + r[1].strip('"')
-    return_data = return_data + '| Invoice Num: ' + r[2].strip('"')
-    return_data = return_data +  '| Amount Paid: ' + r[3].strip('"')
+    return_data = return_data +  ' | Invoice Date: ' + r[1].strip('"')
+    return_data = return_data + ' | Invoice Num: ' + r[2].strip('"')
+    return_data = return_data +  ' | Amount Paid: ' + r[3].strip('"')
     return_data = return_data +  ' | Voucher Num: ' + r[4].strip('"')
     return_data = return_data +  ' | Copies: ' + r[5].strip('"')
     return_data = return_data + ' | Sub From: ' + r[6].strip('"')
     return_data = return_data +  ' | Sub To: ' + r[7].strip('"')
     for x in range(8,len(r)):
-        return_data = return_data +  ' | Note: ' + r[x].replace("\\", "")
+        return_data = return_data +  ' | Note: ' + r[x].replace("\\", "").strip('"')
     return return_data
 
 # Parses PAID fields into format expected in POL notes
@@ -46,29 +46,17 @@ def parse_row(row):
     notes_array.append(row[0].split(',')[0])
     first = True
     for r in row:
-    #    print (r)
         r = r.split(',')
         # first line contains one extra field, remove it from parsing
         if first:
             r = r[1:]
             first = False
         return_data = populate_data(r)
-    #    print (return_data)
         notes_array.append(return_data)
     print (notes_array)
     return notes_array
 
-# Reads each line of the input file
-def read_notes(notes):
-    f  = open(notes,'rt')
-    try:
-        reader = csv.reader(f,delimiter=';')
-        header = next(reader)
-        for row in reader:
-            parsed_notes = parse_row(row)
-            add_pol_note(parsed_notes)
-    finally:
-        f.close()
+
 
 # posts updated POL to Alma API
 def post_pol(url,xml):
@@ -94,6 +82,17 @@ def add_pol_note(notes):
     print (ET.tostring(xml))
     post_pol(url,xml)
 
+# Reads each line of the input file
+def read_notes(notes):
+    f  = open(notes,'rt')
+    try:
+        reader = csv.reader(f,delimiter=';')
+        header = next(reader)
+        for row in reader:
+            parsed_notes = parse_row(row)
+            add_pol_note(parsed_notes)
+    finally:
+        f.close()
 
 logging.basicConfig(filename='status.log',level=logging.DEBUG)
 config = configparser.ConfigParser()
