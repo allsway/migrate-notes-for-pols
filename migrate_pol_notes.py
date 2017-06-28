@@ -22,8 +22,10 @@ def get_request(url):
     results = requests.get(url)
     if results.status_code != 200:
         logging.info('Failed to get results for: ' + url)
+        return None
     else:
-        return ET.fromstring(results.content)
+        return_data = ET.fromstring(results.content)
+        return return_data
 
 # Adds PAID field labels to each field
 def populate_data(r):
@@ -65,7 +67,7 @@ def post_pol(url,xml):
     if r.status_code != 200:
         logging.info('Failed to post: ' + url)
     else:
-        print(r.content)
+        logging.info('Success update for: ' + url)
 
 # Iterates through each note, and creates a note element
 def add_pol_note(notes):
@@ -74,13 +76,14 @@ def add_pol_note(notes):
     url = get_pol_url(id)
     print (url)
     xml = get_request(url)
-    notes_node = xml.find("notes")
-    for n in notes:
-        sub = ET.SubElement(notes_node,'note')
-        note_text = ET.SubElement(sub, 'note_text')
-        note_text.text = n
-    print (ET.tostring(xml))
-    post_pol(url,xml)
+    if xml is not None:
+        notes_node = xml.find("notes")
+        for n in notes:
+            sub = ET.SubElement(notes_node,'note')
+            note_text = ET.SubElement(sub, 'note_text')
+            note_text.text = n
+    #    print (ET.tostring(xml))
+        post_pol(url,xml)
 
 # Reads each line of the input file
 def read_notes(notes):
