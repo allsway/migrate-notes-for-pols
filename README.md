@@ -6,8 +6,10 @@ Takes as arguments
    - initialization file config.txt 
    - a csv file of POL note data, in the format 'order record #', 'Note contents':
       
-      `"RECORD #(ORDER)","BLOC",
-      "o6498577","c"`
+      ```
+      "RECORD #(ORDER)","BLOC",
+      "o6498577","c"
+      ```
 
 Run as `python move_libhas.py config.txt order_notes.csv`
 
