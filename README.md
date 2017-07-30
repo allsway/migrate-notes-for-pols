@@ -5,6 +5,7 @@ Migrates missed PAID note fields to POLs that were migrated to Alma.
 Takes as arguments
    - initialization file config.txt 
    - a csv file of POL note data, in the format 'order record #', 'Note contents':
+      
       `"RECORD #(ORDER)","BLOC",
       "o6498577","c"`
 
