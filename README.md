@@ -11,7 +11,7 @@ Takes as arguments
       "o6498577","c"
       ```
 
-Run as `python move_libhas.py config.txt order_notes.csv`
+Run as `python ./move_libhas.py config.txt order_notes.csv`
 
 ###### config.txt
 Configuration setup can be modified in the file config.txt. 
