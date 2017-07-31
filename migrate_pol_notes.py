@@ -32,11 +32,11 @@ def populate_data(r):
     return_data = ''
     return_data = return_data +  'Paid Date: '  + r[0].strip('"')
     return_data = return_data +  ' | Invoice Date: ' + r[1].strip('"')
-    return_data = return_data + ' | Invoice Num: ' + r[2].strip('"')
+    return_data = return_data +  ' | Invoice Num: ' + r[2].strip('"')
     return_data = return_data +  ' | Amount Paid: ' + r[3].strip('"')
     return_data = return_data +  ' | Voucher Num: ' + r[4].strip('"')
     return_data = return_data +  ' | Copies: ' + r[5].strip('"')
-    return_data = return_data + ' | Sub From: ' + r[6].strip('"')
+    return_data = return_data +  ' | Sub From: ' + r[6].strip('"')
     return_data = return_data +  ' | Sub To: ' + r[7].strip('"')
     for x in range(8,len(r)):
         return_data = return_data +  ' | Note: ' + r[x].replace("\\", "").strip('"')
@@ -46,19 +46,19 @@ def populate_data(r):
 def parse_row(row):
     notes_array = []
     notes_array.append(row[0].split(',')[0])
+    notes_array.append('BLOC: ' + row[0].split(',')[1].strip('"'))
+    i = 0
     first = True
     for r in row:
+        # Each r contains a PAID note field
         r = r.split(',')
-        # first line contains one extra field, remove it from parsing
-        if first:
-            r = r[1:]
+        if first: # first line contains one extra field, remove it from parsing
+            r = r[2:]
             first = False
-        return_data = populate_data(r)
-        notes_array.append(return_data)
-    print (notes_array)
+        if len(r) > 2: # Checking to see if there is PAID data in the incoming data
+            return_data = populate_data(r)
+            notes_array.append(return_data)
     return notes_array
-
-
 
 # posts updated POL to Alma API
 def post_pol(url,xml):
@@ -79,10 +79,10 @@ def add_pol_note(notes):
     if xml is not None:
         notes_node = xml.find("notes")
         for n in notes:
+            print (n)
             sub = ET.SubElement(notes_node,'note')
             note_text = ET.SubElement(sub, 'note_text')
             note_text.text = n
-    #    print (ET.tostring(xml))
         post_pol(url,xml)
 
 # Reads each line of the input file
@@ -93,7 +93,7 @@ def read_notes(notes):
         header = next(reader)
         for row in reader:
             parsed_notes = parse_row(row)
-            add_pol_note(parsed_notes)
+        #    add_pol_note(parsed_notes)
     finally:
         f.close()
 
